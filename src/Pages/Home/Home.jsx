@@ -474,7 +474,7 @@ export default function Home() {
 
   const [userData, setUserData] = useState({
     username: "",
-    email: "",
+    name: "",
     password: "",
     role: "",
   });
@@ -490,22 +490,21 @@ export default function Home() {
   const handleSubmitNewUser = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const { username, email, password, role } = userData;
+    const { username, name, password, role } = userData;
 
-    if (!username || !email || !password || !role) {
+    if (!username || !name || !password || !role) {
       alert("Все поля обязательны для заполнения!");
     setLoading(false);
 
       return;
     }
 
-    const user = {
-      username,
-      name: username, 
-      password,
-      role,
-      email, 
-    };
+    // const user = {
+    //   username,
+    //   name, 
+    //   password,
+    //   role,
+    // };
 
     try {
       const response = await fetch(
@@ -516,7 +515,7 @@ export default function Home() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${Cookies.get("authToken")}`, 
           },
-          body: JSON.stringify(user), 
+          body: JSON.stringify(userData), 
         }
       );
 
@@ -759,8 +758,8 @@ export default function Home() {
             type="text"
             className="home_users_new_input"
             placeholder="Логин (почта)"
-            name="email"
-            value={userData.email}
+            name="name"
+            value={userData.name}
             onChange={handleInputChange}
             required
           />
