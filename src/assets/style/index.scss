@@ -1,0 +1,27 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'TTNorms-Medium',sans-serif;
+
+
+}
+
+
+@font-face {
+    font-family: 'TTNorms-Black';
+    src: url('../fonts/TTNorms-Black.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+@font-face {
+    font-family: 'TTNorms-Medium';
+    src: url('../fonts/TTNorms-Medium.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+body{
+    background-color: black;
+}
