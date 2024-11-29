@@ -30,10 +30,10 @@ export default function Auth({ onAuthSuccess }) {
       if (response.ok) {
         const data = await response.json();
 console.log(data)
-        Cookies.set("authToken", data.access_token, { secure: false, sameSite: "Strict", expires: 7 });
-        Cookies.set("userRole", data.role, { secure: false, sameSite: "Strict", expires: 7 });
-        // Cookies.set("username", username, { secure: false, sameSite: "Strict", expires: 7 });
-        Cookies.set("user_id", data.user_id,{ secure: false, sameSite: "Strict", expires: 7 } )
+        Cookies.set("authToken", data.access_token, { secure: false, sameSite: "None", expires: 7 });
+        Cookies.set("userRole", data.role, { secure: false, sameSite: "None", expires: 7 });
+        // Cookies.set("username", username, { secure: false, sameSite: "None", expires: 7 });
+        Cookies.set("user_id", data.user_id,{ secure: false, sameSite: "None", expires: 7 } )
 
         onAuthSuccess();
         navigate("/"); 
