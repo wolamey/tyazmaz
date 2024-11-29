@@ -5,7 +5,6 @@ import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vs2015 } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import Cookies from "js-cookie";
 
-
 import { useNavigate } from "react-router-dom";
 
 const CodeBlock = ({ codeString }) => {
@@ -36,7 +35,7 @@ const UserEditPopup = ({ user, onClose, onSave }) => {
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
-    user_id: user.id, 
+    user_id: user.id,
     name: user.name,
     username: user.username,
     password: "",
@@ -52,7 +51,6 @@ const UserEditPopup = ({ user, onClose, onSave }) => {
   };
 
   const fetchUserData = async () => {
-
     try {
       const token = Cookies.get("authToken");
       if (!token) {
@@ -76,16 +74,15 @@ const UserEditPopup = ({ user, onClose, onSave }) => {
 
       const data = await response.json();
       console.log("Данные пользователя:", data);
-      return data.id; 
+      return data.id;
     } catch (error) {
       console.error("Ошибка при получении данных о пользователе:", error);
     }
   };
 
   const handleSubmit = async (e) => {
-    
     e.preventDefault();
-    
+
     setLoading(true);
 
     try {
@@ -120,12 +117,11 @@ const UserEditPopup = ({ user, onClose, onSave }) => {
       }
     } catch (err) {
       console.error("Ошибка при обновлении пользователя:", err);
-    } finally{
-    setLoading(false);
-
+    } finally {
+      setLoading(false);
     }
 
-    onClose(); 
+    onClose();
     window.location.reload();
   };
 
@@ -194,8 +190,8 @@ export default function Home() {
   const homeUsersRef = useRef(null);
 
   const [users, setUsers] = useState([]);
-  const [loadingUsers, setLoadingUsers] = useState(false); 
-  const [error, setError] = useState(null); 
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [error, setError] = useState(null);
   const [editingUser, setEditingUser] = useState(null);
 
   const [idProduct, setIdProduct] = useState("");
@@ -205,9 +201,7 @@ export default function Home() {
 
   const [loading, setLoading] = useState(false);
 
-
   const fetchUserData = async () => {
-    
     try {
       const token = Cookies.get("authToken");
       if (!token) {
@@ -231,7 +225,7 @@ export default function Home() {
 
       const data = await response.json();
       console.log("Данные пользователя:", data);
-      return data.id; 
+      return data.id;
     } catch (error) {
       console.error("Ошибка при получении данных о пользователе:", error);
     }
@@ -239,33 +233,33 @@ export default function Home() {
 
   const [serverText, setServerText] = useState("");
   const [serverJson, setServerJson] = useState(null);
-  const [uploadId, setUploadId] = useState(-1)
+  const [uploadId, setUploadId] = useState(-1);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-  
+
     const curFile = inputRef.current?.files[0];
     if (!curFile) {
       setErrorText("Файл не выбран.");
       setLoading(false);
       return;
     }
-  
+
     const token = Cookies.get("authToken");
     if (!token) {
       setErrorText("Не найден токен авторизации.");
       setLoading(false);
       return;
     }
-  
+
     const formData = new FormData();
     formData.append("file", curFile);
     formData.append("id_product", idProduct);
     formData.append("id_parent_ce", idParentCE);
     formData.append("tm", tm);
     formData.append("type_operation", typeOperation);
-  
+
     if (
       curFile === "" ||
       idProduct === "" ||
@@ -277,21 +271,16 @@ export default function Home() {
       setLoading(false);
       return;
     }
-  
+
     try {
-   
-  
       const userId = Cookies.get("user_id");
-  
+
       if (!userId) {
         setErrorText("ID пользователя не найден в куках.");
         setLoading(false);
         return;
       }
-  
-  
-  
-  
+
       const response = await axios.post(
         `http://195.133.94.240:4545/api/v1/upload?user_id=${userId}`,
         formData,
@@ -302,12 +291,12 @@ export default function Home() {
           },
         }
       );
-  
+
       const { text, json, upload } = response.data;
       setServerText(text);
       setCodeString(JSON.stringify(json, null, 2));
       setUploadId(upload);
-      console.log(JSON.stringify(json, null, 2))
+      console.log(JSON.stringify(json, null, 2));
     } catch (error) {
       console.error("Ошибка при загрузке документа:", error);
       setErrorText("Ошибка при загрузке документа.");
@@ -334,12 +323,12 @@ export default function Home() {
         setUsers(response.data);
       } else {
         console.error("API вернул некорректный формат данных:", response.data);
-        setUsers([]); 
+        setUsers([]);
       }
     } catch (err) {
       console.error("Ошибка при загрузке пользователей:", err);
       setError("Не удалось загрузить список пользователей.");
-      setUsers([]); 
+      setUsers([]);
     } finally {
       setLoadingUsers(false);
     }
@@ -372,7 +361,7 @@ export default function Home() {
     if (!curFile) {
       setImageUrl(null);
       setErrorText("Файл не выбран.");
-    setLoading(false);
+      setLoading(false);
 
       return;
     }
@@ -380,13 +369,13 @@ export default function Home() {
     const formData = new FormData();
     formData.append("file", curFile);
 
-    const token = Cookies.get("authToken"); 
+    const token = Cookies.get("authToken");
 
     axios
       .post("http://195.133.94.240:4545/api/v1/preview", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`, 
+          Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
@@ -398,17 +387,13 @@ export default function Home() {
           throw new Error("Не удалось получить ссылку на файл.");
         }
         setLoading(false);
-
       })
       .catch((error) => {
         console.error("Ошибка при загрузке:", error);
         setImageUrl(null);
         setErrorText("Ошибка при обработке файла.");
         setLoading(false);
-
-      })
-      
-      
+      });
   }
 
   const scrollToRef = (ref) => {
@@ -471,7 +456,6 @@ export default function Home() {
     navigate("/auth");
   };
 
-
   const [userData, setUserData] = useState({
     username: "",
     name: "",
@@ -494,14 +478,14 @@ export default function Home() {
 
     if (!username || !name || !password || !role) {
       alert("Все поля обязательны для заполнения!");
-    setLoading(false);
+      setLoading(false);
 
       return;
     }
 
     // const user = {
     //   username,
-    //   name, 
+    //   name,
     //   password,
     //   role,
     // };
@@ -513,30 +497,27 @@ export default function Home() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("authToken")}`, 
+            Authorization: `Bearer ${Cookies.get("authToken")}`,
           },
-          body: JSON.stringify(userData), 
+          body: JSON.stringify(userData),
         }
       );
 
       const result = await response.json();
       if (!response.ok) {
         alert(`Ошибка: ${result.detail || "Что-то пошло не так"}`);
-    setLoading(false);
-
+        setLoading(false);
       }
 
       if (response.ok) {
         alert("Пользователь успешно зарегистрирован!");
-    setLoading(false);
-    window.location.reload();
-
+        setLoading(false);
+        window.location.reload();
       }
     } catch (error) {
       alert("Сетевая ошибка");
       console.error(error);
-    setLoading(false);
-
+      setLoading(false);
     }
   };
 
@@ -546,7 +527,7 @@ export default function Home() {
       setErrorText("Не найден токен авторизации.");
       return;
     }
-  
+
     try {
       const response = await axios.get(
         `http://195.133.94.240:4545/api/v1/save?upload_id=${uploadId}`,
@@ -554,14 +535,14 @@ export default function Home() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          responseType: "blob", 
+          responseType: "blob",
         }
       );
-  
+
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", `file_${uploadId}.xlsx`); 
+      link.setAttribute("download", `file_${uploadId}.xlsx`);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -570,15 +551,15 @@ export default function Home() {
       setErrorText("Ошибка при скачивании файла.");
     }
   };
-  
 
   return (
     <div className="home">
-
-{loading && (
-  <div className="overlay"> <div className="loader"></div> </div>
-
-)}
+      {loading && (
+        <div className="overlay">
+          {" "}
+          <div className="loader"></div>{" "}
+        </div>
+      )}
       <div className="home_left">
         <div className="home_left_buttons">
           <button
@@ -595,16 +576,15 @@ export default function Home() {
           >
             Результат
           </button>
-          {Cookies.get("userRole") === 'admin'&&(
-    <button
-    id="usersButton"
-    className="home_left_item_button button"
-    onClick={() => handleButtonClick(homeUsersRef, "usersButton")}
-  >
-    Пользователи
-  </button>
+          {Cookies.get("userRole") === "admin" && (
+            <button
+              id="usersButton"
+              className="home_left_item_button button"
+              onClick={() => handleButtonClick(homeUsersRef, "usersButton")}
+            >
+              Пользователи
+            </button>
           )}
-      
         </div>
         <button onClick={handleLogout} className="home_exit button">
           Выйти
@@ -613,10 +593,7 @@ export default function Home() {
       <div className="home_body">
         <div className="home_download" ref={homeDownloadRef}>
           <div className="home_download_top">
-            <form
-              action=""
-              className="home_download_top_form"
-            >
+            <form action="" className="home_download_top_form">
               <div className="home_download_el">
                 <label
                   className="home_download_el_name button"
@@ -698,7 +675,11 @@ export default function Home() {
           <div className="home_result_txt">
             <div className="home_result_txt_item">{serverText}</div>
             <div className="home_result_txt_buttons">
-              <button disabled={uploadId === -1 ?true:  false}  onClick={() => downloadFile(uploadId)} className="home_result_txt_button_down button">
+              <button
+                disabled={uploadId === -1 ? true : false}
+                onClick={() => downloadFile(uploadId)}
+                className="home_result_txt_button_down button"
+              >
                 Скачать
               </button>
             </div>
@@ -717,7 +698,7 @@ export default function Home() {
                     {Cookies.get("userRole") === "admin" && (
                       <button
                         className="home_users_item_edit button"
-                        onClick={() => handleEditUser(user)} 
+                        onClick={() => handleEditUser(user)}
                       >
                         Редактировать
                       </button>
@@ -731,70 +712,71 @@ export default function Home() {
           </div>
           {editingUser && (
             <UserEditPopup
-              user={editingUser} 
+              user={editingUser}
               onClose={handleClosePopup}
               onSave={handleSaveUser}
             />
           )}
 
-          {Cookies.get("userRole") === 'admin' &&(
-      <div className="home_users_create_new">
-      <p className="home_users_new_title">Создание нового пользователя</p>
-      <form
-        onSubmit={handleSubmitNewUser}
-        className="home_users_new_user"
-      >
-        <div className="home_users_new_user_body">
-          <input
-            type="text"
-            className="home_users_new_input"
-            placeholder="Имя пользователя"
-            name="username"
-            value={userData.username}
-            onChange={handleInputChange}
-            required
-          />
-          <input
-            type="text"
-            className="home_users_new_input"
-            placeholder="Логин (почта)"
-            name="name"
-            value={userData.name}
-            onChange={handleInputChange}
-            required
-          />
-          <input
-            type="password"
-            className="home_users_new_input"
-            placeholder="Пароль"
-            name="password"
-            value={userData.password}
-            onChange={handleInputChange}
-            required
-          />
-          <select
-            name="role"
-            className="home_users_new_select"
-            value={userData.role}
-            onChange={handleInputChange}
-            required
-          >
-            <option disabled value="">
-              Выбрать роль
-            </option>
-            <option value="admin">Администратор</option>
-            <option value="manager">Пользователь</option>
-          </select>
-        </div>
-        <input
-          type="submit"
-          className="home_users_new_submit button"
-          value="Добавить нового пользователя"
-        />
-      </form>
-    </div>
+          {Cookies.get("userRole") === "admin" && (
+            <div className="home_users_create_new">
+              <p className="home_users_new_title">
+                Создание нового пользователя
+              </p>
+              <form
+                onSubmit={handleSubmitNewUser}
+                className="home_users_new_user"
+              >
+                <div className="home_users_new_user_body">
+                  <input
+                    type="text"
+                    className="home_users_new_input"
+                    placeholder="Имя пользователя"
+                    name="username"
+                    value={userData.username}
+                    onChange={handleInputChange}
+                    required
+                  />
+                  <input
+                    type="text"
+                    className="home_users_new_input"
+                    placeholder="Логин (почта)"
+                    name="name"
+                    value={userData.name}
+                    onChange={handleInputChange}
+                    required
+                  />
+                  <input
+                    type="password"
+                    className="home_users_new_input"
+                    placeholder="Пароль"
+                    name="password"
+                    value={userData.password}
+                    onChange={handleInputChange}
+                    required
+                  />
+                  <select
+                    name="role"
+                    className="home_users_new_select"
+                    value={userData.role}
+                    onChange={handleInputChange}
+                    required
+                  >
+                    <option disabled value="">
+                      Выбрать роль
+                    </option>
+                    <option value="admin">Администратор</option>
+                    <option value="manager">Пользователь</option>
+                  </select>
+                </div>
+                <input
+                  type="submit"
+                  className="home_users_new_submit button"
+                  value="Добавить нового пользователя"
+                />
+              </form>
+            </div>
           )}
-    
         </div>
       </div>
     </div>
