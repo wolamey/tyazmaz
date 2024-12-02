@@ -232,7 +232,6 @@ export default function Home() {
   };
 
   const [serverText, setServerText] = useState("");
-  const [serverJson, setServerJson] = useState(null);
   const [uploadId, setUploadId] = useState(-1);
 
   const handleSubmit = async (e) => {
@@ -252,13 +251,29 @@ export default function Home() {
       setLoading(false);
       return;
     }
+    const userId = Cookies.get("user_id");
 
-    const formData = new FormData();
-    formData.append("file", curFile);
-    formData.append("id_product", idProduct);
-    formData.append("id_parent_ce", idParentCE);
-    formData.append("tm", tm);
-    formData.append("type_operation", typeOperation);
+    if (!userId) {
+      setErrorText("ID пользователя не найден в куках.");
+      setLoading(false);
+      return;
+    }
+
+    const formData1 = new FormData();
+    // formData1.append("user_id", userId);
+    // formData1.append("id_product", idProduct);
+    // formData1.append("id_parent_ce", idParentCE);
+    // formData1.append("tm", tm);
+    // formData1.append("type_operation", typeOperation);
+    formData1.append("file", curFile);
+
+    console.log("Файл:", formData1.get("file"));
+    // console.log("id:", formData1.get("user_id"));
+    // console.log("id изделия:", formData1.get("id_product"));
+    // console.log("id родительской СЕ:", formData1.get("id_parent_ce"));
+    // console.log("ТМ:", formData1.get("tm"));
+    // console.log("Тип операции:", formData1.get("type_operation"));
+    
 
     if (
       curFile === "" ||
@@ -273,17 +288,16 @@ export default function Home() {
     }
 
     try {
-      const userId = Cookies.get("user_id");
-
-      if (!userId) {
-        setErrorText("ID пользователя не найден в куках.");
-        setLoading(false);
-        return;
-      }
-
+     
+      formData1.forEach((value, key) => {
+        console.log(`${key}: ${value}`);
+      });
+      console.log(formData1)
+      
+      
       const response = await axios.post(
-        `http://195.133.94.240:4545/api/v1/upload?user_id=${userId}`,
-        formData,
+        `http://195.133.94.240:4545/api/v1/upload?user_id=${userId}&id_product=${idProduct}&id_parent_ce=${idParentCE}&tm=${tm}&type_operation=${typeOperation}`,
+        formData1,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -294,6 +308,7 @@ export default function Home() {
 
       const { text, json, upload } = response.data;
       setServerText(text);
+      // json.header_tp.route = tm;
       setCodeString(JSON.stringify(json, null, 2));
       setUploadId(upload);
       console.log(JSON.stringify(json, null, 2));
@@ -304,6 +319,10 @@ export default function Home() {
       setLoading(false);
     }
   };
+
+
+
+  
   const fetchUsers = async () => {
     setLoadingUsers(true);
     setError(null);
@@ -327,6 +346,7 @@ export default function Home() {
       }
     } catch (err) {
       console.error("Ошибка при загрузке пользователей:", err);
+      handleLogout()
       setError("Не удалось загрузить список пользователей.");
       setUsers([]);
     } finally {
@@ -591,9 +611,9 @@ export default function Home() {
         </button>
       </div>
       <div className="home_body">
-        <div className="home_download" ref={homeDownloadRef}>
+        <form className="home_download"  onSubmit={handleSubmit} ref={homeDownloadRef}>
           <div className="home_download_top">
-            <form action="" className="home_download_top_form">
+            <div action="" className="home_download_top_form"  >
               <div className="home_download_el">
                 <label
                   className="home_download_el_name button"
@@ -609,7 +629,7 @@ export default function Home() {
                   onChange={updateImageDisplay}
                 />
               </div>
-            </form>
+            </div>
           </div>
           <div className="home_file_preview">
             {errorText ? (
@@ -665,10 +685,9 @@ export default function Home() {
               type="submit"
               className="home_params_submit button"
               value="Обработать"
-              onClick={handleSubmit}
             />
           </div>
-        </div>
+        </form>
         <div className="home_result" ref={homeResultRef}>
           <CodeBlock codeString={codeString} />
 
