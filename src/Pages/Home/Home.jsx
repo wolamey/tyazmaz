@@ -58,7 +58,7 @@ const UserEditPopup = ({ user, onClose, onSave }) => {
       }
 
       const response = await fetch(
-        "http://195.133.94.240:4545/api/v1/users/me",
+        "http://127.0.0.1:8000/api/v1/users/me",
         {
           method: "GET",
           headers: {
@@ -88,7 +88,7 @@ const UserEditPopup = ({ user, onClose, onSave }) => {
     try {
       const token = Cookies.get("authToken");
       const response = await fetch(
-        "http://195.133.94.240:4545/api/v1/users/me",
+        "http://127.0.0.1:8000/api/v1/users/me",
         {
           method: "PUT",
           headers: {
@@ -201,6 +201,65 @@ export default function Home() {
 
   const [loading, setLoading] = useState(false);
 
+
+const [extraInfo, setExtraInfo] = useState("")
+
+
+
+
+const handleRefactor = async () => {
+  setLoading(true);
+
+  const token = Cookies.get("authToken");
+  if (!token) {
+    setErrorText("Не найден токен авторизации.");
+    setLoading(false);
+    return;
+  }
+
+  const userId = Cookies.get("user_id");
+  if (!userId) {
+    setErrorText("ID пользователя не найден в куках.");
+    setLoading(false);
+    return;
+  }
+
+  const data = {
+    extra_info: extraInfo,
+  };
+
+  try {
+    const response = await axios.post(
+      `http://127.0.0.1:8000/api/v1/refactor?upload_id=${uploadId}&id_product=${idProduct}&id_parent_ce=${idParentCE}&tm=${tm}&type_operation=${typeOperation}`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const { text, json } = response.data;
+    setServerText(text);
+    setCodeString(JSON.stringify(json, null, 2));
+    console.log("Обновлённый текст:", text);
+    console.log("Обновлённый JSON:", JSON.stringify(json, null, 2));
+  } catch (error) {
+    console.error("Ошибка при рефакторе документа:", error);
+    setErrorText("Ошибка при рефакторе документа.");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+
+
+
+
+
+
   const fetchUserData = async () => {
     try {
       const token = Cookies.get("authToken");
@@ -209,7 +268,7 @@ export default function Home() {
       }
 
       const response = await fetch(
-        "http://195.133.94.240:4545/api/v1/users/me",
+        "http://127.0.0.1:8000/api/v1/users/me",
         {
           method: "GET",
           headers: {
@@ -260,20 +319,11 @@ export default function Home() {
     }
 
     const formData1 = new FormData();
-    // formData1.append("user_id", userId);
-    // formData1.append("id_product", idProduct);
-    // formData1.append("id_parent_ce", idParentCE);
-    // formData1.append("tm", tm);
-    // formData1.append("type_operation", typeOperation);
+   
     formData1.append("file", curFile);
 
     console.log("Файл:", formData1.get("file"));
-    // console.log("id:", formData1.get("user_id"));
-    // console.log("id изделия:", formData1.get("id_product"));
-    // console.log("id родительской СЕ:", formData1.get("id_parent_ce"));
-    // console.log("ТМ:", formData1.get("tm"));
-    // console.log("Тип операции:", formData1.get("type_operation"));
-    
+
 
     if (
       curFile === "" ||
@@ -288,15 +338,13 @@ export default function Home() {
     }
 
     try {
-     
       formData1.forEach((value, key) => {
         console.log(`${key}: ${value}`);
       });
-      console.log(formData1)
-      
-      
+      console.log(formData1);
+
       const response = await axios.post(
-        `http://195.133.94.240:4545/api/v1/upload?user_id=${userId}&id_product=${idProduct}&id_parent_ce=${idParentCE}&tm=${tm}&type_operation=${typeOperation}`,
+        `http://127.0.0.1:8000/api/v1/upload?user_id=${userId}&id_product=${idProduct}&id_parent_ce=${idParentCE}&tm=${tm}&type_operation=${typeOperation}`,
         formData1,
         {
           headers: {
@@ -320,16 +368,13 @@ export default function Home() {
     }
   };
 
-
-
-  
   const fetchUsers = async () => {
     setLoadingUsers(true);
     setError(null);
     try {
       const token = Cookies.get("authToken");
       const response = await axios.get(
-        "http://195.133.94.240:4545/api/v1/users",
+        "http://127.0.0.1:8000/api/v1/users",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -346,7 +391,7 @@ export default function Home() {
       }
     } catch (err) {
       console.error("Ошибка при загрузке пользователей:", err);
-      handleLogout()
+      handleLogout();
       setError("Не удалось загрузить список пользователей.");
       setUsers([]);
     } finally {
@@ -390,9 +435,9 @@ export default function Home() {
     formData.append("file", curFile);
 
     const token = Cookies.get("authToken");
-
+    console.log(formData);
     axios
-      .post("http://195.133.94.240:4545/api/v1/preview", formData, {
+      .post("http://127.0.0.1:8000/api/v1/preview", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
@@ -503,16 +548,10 @@ export default function Home() {
       return;
     }
 
-    // const user = {
-    //   username,
-    //   name,
-    //   password,
-    //   role,
-    // };
-
+  
     try {
       const response = await fetch(
-        "http://195.133.94.240:4545/api/v1/register",
+        "http://127.0.0.1:8000/api/v1/register",
         {
           method: "POST",
           headers: {
@@ -550,7 +589,7 @@ export default function Home() {
 
     try {
       const response = await axios.get(
-        `http://195.133.94.240:4545/api/v1/save?upload_id=${uploadId}`,
+        `http://127.0.0.1:8000/api/v1/save?upload_id=${uploadId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -596,24 +635,26 @@ export default function Home() {
           >
             Результат
           </button>
-          {Cookies.get("userRole") === "admin" && (
-            <button
-              id="usersButton"
-              className="home_left_item_button button"
-              onClick={() => handleButtonClick(homeUsersRef, "usersButton")}
-            >
-              Пользователи
-            </button>
-          )}
+          <button
+            id="usersButton"
+            className="home_left_item_button button"
+            onClick={() => handleButtonClick(homeUsersRef, "usersButton")}
+          >
+            Пользователи
+          </button>
         </div>
         <button onClick={handleLogout} className="home_exit button">
           Выйти
         </button>
       </div>
       <div className="home_body">
-        <form className="home_download"  onSubmit={handleSubmit} ref={homeDownloadRef}>
+        <form
+          className="home_download"
+          onSubmit={handleSubmit}
+          ref={homeDownloadRef}
+        >
           <div className="home_download_top">
-            <div action="" className="home_download_top_form"  >
+            <div action="" className="home_download_top_form">
               <div className="home_download_el">
                 <label
                   className="home_download_el_name button"
@@ -704,6 +745,22 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        <textarea
+  className="home_params_item_value refactor"
+  value={extraInfo}
+  onChange={(e) => setExtraInfo(e.target.value)}
+  placeholder="пояснения"
+  required
+/>
+
+<input
+  type="submit"
+  className="home_params_submit button refactor"
+  value="Рефактор"
+  onClick={handleRefactor}
+/>
+
 
         <div className="home_users" ref={homeUsersRef}>
           {loadingUsers && <p>Загрузка пользователей...</p>}
