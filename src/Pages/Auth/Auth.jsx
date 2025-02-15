@@ -20,7 +20,7 @@ export default function Auth({ onAuthSuccess }) {
     formData.append("grant_type", "password");
 
     try {
-      const response = await fetch("http://192.168.11.131:4545/api/v1/token", {
+      const response = await fetch("http://127.0.0.1:4545/api/v1/token", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",

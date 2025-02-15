@@ -58,7 +58,7 @@ const UserEditPopup = ({ user, onClose, onSave }) => {
       }
 
       const response = await fetch(
-        "http://192.168.11.131:4545/api/v1/users/me",
+        "http://127.0.0.1:4545/api/v1/users/me",
         {
           method: "GET",
           headers: {
@@ -88,7 +88,7 @@ const UserEditPopup = ({ user, onClose, onSave }) => {
     try {
       const token = Cookies.get("authToken");
       const response = await fetch(
-        "http://192.168.11.131:4545/api/v1/users/me",
+        "http://127.0.0.1:4545/api/v1/users/me",
         {
           method: "PUT",
           headers: {
@@ -230,7 +230,7 @@ const handleRefactor = async () => {
 
   try {
     const response = await axios.post(
-      `http://192.168.11.131:4545/api/v1/refactor?upload_id=${uploadId}&id_product=${idProduct}&id_parent_ce=${idParentCE}&tm=${tm}&type_operation=${typeOperation}`,
+      `http://127.0.0.1:4545/api/v1/refactor?upload_id=${uploadId}&id_product=${idProduct}&id_parent_ce=${idParentCE}&tm=${tm}&type_operation=${typeOperation}`,
       data,
       {
         headers: {
@@ -268,7 +268,7 @@ const handleRefactor = async () => {
       }
 
       const response = await fetch(
-        "http://192.168.11.131:4545/api/v1/users/me",
+        "http://127.0.0.1:4545/api/v1/users/me",
         {
           method: "GET",
           headers: {
@@ -344,7 +344,7 @@ const handleRefactor = async () => {
       console.log(formData1);
 
       const response = await axios.post(
-        `http://192.168.11.131:4545/api/v1/upload?user_id=${userId}&id_product=${idProduct}&id_parent_ce=${idParentCE}&tm=${tm}&type_operation=${typeOperation}`,
+        `http://127.0.0.1:4545/api/v1/upload?user_id=${userId}&id_product=${idProduct}&id_parent_ce=${idParentCE}&tm=${tm}&type_operation=${typeOperation}`,
         formData1,
         {
           headers: {
@@ -374,7 +374,7 @@ const handleRefactor = async () => {
     try {
       const token = Cookies.get("authToken");
       const response = await axios.get(
-        "http://192.168.11.131:4545/api/v1/users",
+        "http://127.0.0.1:4545/api/v1/users",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -437,7 +437,7 @@ const handleRefactor = async () => {
     const token = Cookies.get("authToken");
     console.log(formData);
     axios
-      .post("http://192.168.11.131:4545/api/v1/preview", formData, {
+      .post("http://127.0.0.1:4545/api/v1/preview", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
@@ -551,7 +551,7 @@ const handleRefactor = async () => {
   
     try {
       const response = await fetch(
-        "http://192.168.11.131:4545/api/v1/register",
+        "http://127.0.0.1:4545/api/v1/register",
         {
           method: "POST",
           headers: {
@@ -589,7 +589,7 @@ const handleRefactor = async () => {
 
     try {
       const response = await axios.get(
-        `http://192.168.11.131:4545/api/v1/save?upload_id=${uploadId}`,
+        `http://127.0.0.1:4545/api/v1/save?upload_id=${uploadId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
