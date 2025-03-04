@@ -271,17 +271,17 @@ export default function Home() {
       extra_info: extraInfo,
     };
 
-    try {
-      const response = await axios.post(
-        `http://158.160.80.173:4545/api/v1/refactor?upload_id=${uploadId}&id_product=${idProduct}&id_parent_ce=${idParentCE}&tm=${tm}&type_operation=${typeOperation}`,
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+  try {
+    const response = await axios.post(
+      `http://158.160.80.173:4545/api/v1/refactor?upload_id=${uploadId}&id_product=${idProduct}&id_parent_ce=${idParentCE}&tm=${tm}&type_operation=${typeOperation}`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
       const { text, json } = response.data;
       setServerText(text);
