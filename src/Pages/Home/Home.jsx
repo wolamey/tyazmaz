@@ -58,7 +58,7 @@ const UserEditPopup = ({ user, onClose, onSave }) => {
       }
 
       const response = await fetch(
-        "http://127.0.0.1:8000/api/v1/users/me",
+        "http://158.160.80.173:4545/api/v1/users/me",
         {
           method: "GET",
           headers: {
@@ -87,24 +87,31 @@ const UserEditPopup = ({ user, onClose, onSave }) => {
 
     try {
       const token = Cookies.get("authToken");
+  
+      const userData = {
+        user_id: formData.user_id,
+        name: formData.name,
+        username: formData.username,
+        role: formData.role,
+      };
+  
+      if (formData.password) {
+        userData.password = formData.password;
+      } else {
+        userData.password = null;
+      }
+  
       const response = await fetch(
-        "http://127.0.0.1:8000/api/v1/users/me",
+        "http://158.160.80.173:4545/api/v1/users/me",
         {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            user_id: formData.user_id,
-            name: formData.name,
-            username: formData.username,
-            password: formData.password || undefined,
-            role: formData.role,
-          }),
+          body: JSON.stringify(userData),
         }
       );
-
       if (response.ok) {
         const updatedUser = await response.json();
         setUsers((prevUsers) =>
@@ -125,7 +132,39 @@ const UserEditPopup = ({ user, onClose, onSave }) => {
     window.location.reload();
   };
 
-  return (
+  const handleDelete = async (id) => {
+    setLoading(true);
+
+    if (window.confirm("Вы уверены, что хотите удалить этого пользователя?")) {
+      try {
+        const token = Cookies.get("authToken");
+        const response = await fetch(
+          `http://158.160.80.173:4545/api/v1/users/${id}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          alert(`Юзер успешно удален`);
+          onClose();
+          window.location.reload();
+        } else {
+          console.error("Ошибка удаления пользователя:", response.status);
+          alert("Ошибка удаления пользователя");
+        }
+      } catch (err) {
+        console.error("Ошибка при удалении пользователя:", err);
+        alert("Ошибка удаления пользователя");
+      } finally {
+        setLoading(false);
+      }
+    }
+  };  return (
     <div className="popup">
       <div className="popup_content">
         <h3>Редактировать пользователя</h3>
@@ -155,7 +194,7 @@ const UserEditPopup = ({ user, onClose, onSave }) => {
             value={formData.password}
             onChange={handleInputChange}
             placeholder="Новый пароль"
-            disabled
+            
           />
           <select
             className="home_users_new_input"
@@ -167,6 +206,14 @@ const UserEditPopup = ({ user, onClose, onSave }) => {
             <option value="admin">Администратор</option>
             <option value="manager">Пользователь</option>
           </select>
+
+          <button
+            type="button"
+            className="delete_user button"
+            onClick={() => handleDelete(formData.user_id)}
+          >
+            Удалить пользователя
+          </button>
           <div className="popup_actions">
             <button type="submit" className="button">
               Сохранить
@@ -201,64 +248,53 @@ export default function Home() {
 
   const [loading, setLoading] = useState(false);
 
+  const [extraInfo, setExtraInfo] = useState("");
 
-const [extraInfo, setExtraInfo] = useState("")
+  const handleRefactor = async () => {
+    setLoading(true);
 
+    const token = Cookies.get("authToken");
+    if (!token) {
+      setErrorText("Не найден токен авторизации.");
+      setLoading(false);
+      return;
+    }
 
+    const userId = Cookies.get("user_id");
+    if (!userId) {
+      setErrorText("ID пользователя не найден в куках.");
+      setLoading(false);
+      return;
+    }
 
+    const data = {
+      extra_info: extraInfo,
+    };
 
-const handleRefactor = async () => {
-  setLoading(true);
+    try {
+      const response = await axios.post(
+        `http://158.160.80.173:4545/api/v1/refactor?upload_id=${uploadId}&id_product=${idProduct}&id_parent_ce=${idParentCE}&tm=${tm}&type_operation=${typeOperation}`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-  const token = Cookies.get("authToken");
-  if (!token) {
-    setErrorText("Не найден токен авторизации.");
-    setLoading(false);
-    return;
-  }
-
-  const userId = Cookies.get("user_id");
-  if (!userId) {
-    setErrorText("ID пользователя не найден в куках.");
-    setLoading(false);
-    return;
-  }
-
-  const data = {
-    extra_info: extraInfo,
+      const { text, json } = response.data;
+      setServerText(text);
+      setCodeString(JSON.stringify(json, null, 2));
+      console.log("Обновлённый текст:", text);
+      console.log("Обновлённый JSON:", JSON.stringify(json, null, 2));
+    } catch (error) {
+      console.error("Ошибка при рефакторе документа:", error);
+      setErrorText("Ошибка при рефакторе документа.");
+    } finally {
+      setLoading(false);
+    }
   };
-
-  try {
-    const response = await axios.post(
-      `http://127.0.0.1:8000/api/v1/refactor?upload_id=${uploadId}&id_product=${idProduct}&id_parent_ce=${idParentCE}&tm=${tm}&type_operation=${typeOperation}`,
-      data,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    const { text, json } = response.data;
-    setServerText(text);
-    setCodeString(JSON.stringify(json, null, 2));
-    console.log("Обновлённый текст:", text);
-    console.log("Обновлённый JSON:", JSON.stringify(json, null, 2));
-  } catch (error) {
-    console.error("Ошибка при рефакторе документа:", error);
-    setErrorText("Ошибка при рефакторе документа.");
-  } finally {
-    setLoading(false);
-  }
-};
-
-
-
-
-
-
-
 
   const fetchUserData = async () => {
     try {
@@ -268,7 +304,7 @@ const handleRefactor = async () => {
       }
 
       const response = await fetch(
-        "http://127.0.0.1:8000/api/v1/users/me",
+        "http://158.160.80.173:4545/api/v1/users/me",
         {
           method: "GET",
           headers: {
@@ -319,11 +355,10 @@ const handleRefactor = async () => {
     }
 
     const formData1 = new FormData();
-   
+
     formData1.append("file", curFile);
 
     console.log("Файл:", formData1.get("file"));
-
 
     if (
       curFile === "" ||
@@ -344,7 +379,7 @@ const handleRefactor = async () => {
       console.log(formData1);
 
       const response = await axios.post(
-        `http://127.0.0.1:8000/api/v1/upload?user_id=${userId}&id_product=${idProduct}&id_parent_ce=${idParentCE}&tm=${tm}&type_operation=${typeOperation}`,
+        `http://158.160.80.173:4545/api/v1/upload?user_id=${userId}&id_product=${idProduct}&id_parent_ce=${idParentCE}&tm=${tm}&type_operation=${typeOperation}`,
         formData1,
         {
           headers: {
@@ -374,7 +409,7 @@ const handleRefactor = async () => {
     try {
       const token = Cookies.get("authToken");
       const response = await axios.get(
-        "http://127.0.0.1:8000/api/v1/users",
+        "http://158.160.80.173:4545/api/v1/users",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -437,7 +472,7 @@ const handleRefactor = async () => {
     const token = Cookies.get("authToken");
     console.log(formData);
     axios
-      .post("http://127.0.0.1:8000/api/v1/preview", formData, {
+      .post("http://158.160.80.173:4545/api/v1/preview", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
@@ -548,10 +583,9 @@ const handleRefactor = async () => {
       return;
     }
 
-  
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/api/v1/register",
+        "http://158.160.80.173:4545/api/v1/register",
         {
           method: "POST",
           headers: {
@@ -589,7 +623,7 @@ const handleRefactor = async () => {
 
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/v1/save?upload_id=${uploadId}`,
+        `http://158.160.80.173:4545/api/v1/save?upload_id=${uploadId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -747,20 +781,19 @@ const handleRefactor = async () => {
         </div>
 
         <textarea
-  className="home_params_item_value refactor"
-  value={extraInfo}
-  onChange={(e) => setExtraInfo(e.target.value)}
-  placeholder="пояснения"
-  required
-/>
+          className="home_params_item_value refactor"
+          value={extraInfo}
+          onChange={(e) => setExtraInfo(e.target.value)}
+          placeholder="пояснения"
+          required
+        />
 
-<input
-  type="submit"
-  className="home_params_submit button refactor"
-  value="Рефактор"
-  onClick={handleRefactor}
-/>
-
+        <input
+          type="submit"
+          className="home_params_submit button refactor"
+          value="Рефактор"
+          onClick={handleRefactor}
+        />
 
         <div className="home_users" ref={homeUsersRef}>
           {loadingUsers && <p>Загрузка пользователей...</p>}
