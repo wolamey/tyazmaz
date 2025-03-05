@@ -58,7 +58,7 @@ const UserEditPopup = ({ user, onClose, onSave }) => {
       }
 
       const response = await fetch(
-        "http://158.160.80.173:4545/api/v1/users/me",
+        "http://85.140.62.250:4545/api/v1/users/me",
         {
           method: "GET",
           headers: {
@@ -102,7 +102,7 @@ const UserEditPopup = ({ user, onClose, onSave }) => {
       }
   
       const response = await fetch(
-        "http://158.160.80.173:4545/api/v1/users/me",
+        "http://85.140.62.250:4545/api/v1/users/me",
         {
           method: "PUT",
           headers: {
@@ -139,7 +139,7 @@ const UserEditPopup = ({ user, onClose, onSave }) => {
       try {
         const token = Cookies.get("authToken");
         const response = await fetch(
-          `http://158.160.80.173:4545/api/v1/users/${id}`,
+          `http://85.140.62.250:4545/api/v1/users/${id}`,
           {
             method: "DELETE",
             headers: {
@@ -273,7 +273,7 @@ export default function Home() {
 
   try {
     const response = await axios.post(
-      `http://158.160.80.173:4545/api/v1/refactor?upload_id=${uploadId}&id_product=${idProduct}&id_parent_ce=${idParentCE}&tm=${tm}&type_operation=${typeOperation}`,
+      `http://85.140.62.250:4545/api/v1/refactor?upload_id=${uploadId}&id_product=${idProduct}&id_parent_ce=${idParentCE}&tm=${tm}&type_operation=${typeOperation}`,
       data,
       {
         headers: {
@@ -304,7 +304,7 @@ export default function Home() {
       }
 
       const response = await fetch(
-        "http://158.160.80.173:4545/api/v1/users/me",
+        "http://85.140.62.250:4545/api/v1/users/me",
         {
           method: "GET",
           headers: {
@@ -379,7 +379,7 @@ export default function Home() {
       console.log(formData1);
 
       const response = await axios.post(
-        `http://158.160.80.173:4545/api/v1/upload?user_id=${userId}&id_product=${idProduct}&id_parent_ce=${idParentCE}&tm=${tm}&type_operation=${typeOperation}`,
+        `http://85.140.62.250:4545/api/v1/upload?user_id=${userId}&id_product=${idProduct}&id_parent_ce=${idParentCE}&tm=${tm}&type_operation=${typeOperation}`,
         formData1,
         {
           headers: {
@@ -409,7 +409,7 @@ export default function Home() {
     try {
       const token = Cookies.get("authToken");
       const response = await axios.get(
-        "http://158.160.80.173:4545/api/v1/users",
+        "http://85.140.62.250:4545/api/v1/users",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -472,7 +472,7 @@ export default function Home() {
     const token = Cookies.get("authToken");
     console.log(formData);
     axios
-      .post("http://158.160.80.173:4545/api/v1/preview", formData, {
+      .post("http://85.140.62.250:4545/api/v1/preview", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
@@ -585,7 +585,7 @@ export default function Home() {
 
     try {
       const response = await fetch(
-        "http://158.160.80.173:4545/api/v1/register",
+        "http://85.140.62.250:4545/api/v1/register",
         {
           method: "POST",
           headers: {
@@ -623,7 +623,7 @@ export default function Home() {
 
     try {
       const response = await axios.get(
-        `http://158.160.80.173:4545/api/v1/save?upload_id=${uploadId}`,
+        `http://85.140.62.250:4545/api/v1/save?upload_id=${uploadId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
