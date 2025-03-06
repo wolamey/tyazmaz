@@ -10,16 +10,40 @@ import { useNavigate } from "react-router-dom";
 const CodeBlock = ({ codeString }) => {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = () => {
-    navigator.clipboard
-      .writeText(codeString)
-      .then(() => {
+  const handleCopy = async () => {
+    try {
+      // Проверяем разрешение на запись в буфер обмена
+      const permission = await navigator.permissions.query({ name: "clipboard-write" });
+
+      if (permission.state === "denied") {
+        throw new Error("Доступ к буферу обмена запрещен браузером!");
+      }
+
+      // Пробуем записать в буфер обмена через Clipboard API
+      await navigator.clipboard.writeText(codeString);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+      console.log("Текст успешно скопирован!");
+    } catch (err) {
+      console.error("Ошибка копирования через Clipboard API:", err);
+
+      // Fallback: Используем document.execCommand("copy"), если API недоступно
+      try {
+        const tempInput = document.createElement("textarea");
+        tempInput.value = codeString;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
-      })
-      .catch((err) => console.error("Failed to copy text: ", err));
+        console.log("Текст скопирован с помощью execCommand!");
+      } catch (fallbackError) {
+        console.error("Ошибка копирования :", fallbackError);
+      }
+    }
   };
-
   return (
     <div style={{ position: "relative" }}>
       <button className="copy_button" onClick={handleCopy}>
